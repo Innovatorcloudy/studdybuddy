@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyBuddy - All-in-one smart study assistant featuring a customizable Pomodoro clock, interactive 3D flashcards, custom quizzes, and ambient focus sounds.">
+  <title>StudyBuddy &bull; Pomodoro, Flashcards &amp; Quizzes</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background lighting / glow orbs -->
+  <div class="ambient-glow glow-top-left" aria-hidden="true"></div>
+  <div class="ambient-glow glow-bottom-right" aria-hidden="true"></div>
+
+  <!-- Header & Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo-wrap">
+          <svg class="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="10" fill="url(#brandGrad)"/>
+            <path d="M8 12C8 9.79086 9.79086 8 12 8H20C22.2091 8 24 9.79086 24 12V21C24 22.6569 22.6569 24 21 24H11C9.34315 24 8 22.6569 8 21V12Z" fill="white" fill-opacity="0.9"/>
+            <circle cx="12" cy="14" r="2" fill="#4F46E5"/>
+            <circle cx="20" cy="14" r="2" fill="#4F46E5"/>
+            <path d="M13 18C13 18 14.5 20 16 20C17.5 20 19 18 19 18" stroke="#4F46E5" stroke-width="1.8" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="brandGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8B5CF6"/>
+                <stop stop-offset="1" stop-color="#3B82F6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>StudyBuddy</h1>
+          <span class="brand-badge">Focus &bull; Learn &bull; Master</span>
+        </div>
+      </div>
+
+      <!-- Buddy Mood Mini Bar -->
+      <div class="companion-pill" id="companionPill" title="Click to talk to your Study Buddy!">
+        <div class="mascot-face-mini" id="miniMascot">
+          <span class="mascot-eye left"></span>
+          <span class="mascot-eye right"></span>
+          <span class="mascot-smile"></span>
+        </div>
+        <span class="companion-message" id="companionPillText">Ready to learn something awesome?</span>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="pomodoro" id="tab-pomodoro" role="tab" aria-selected="true" aria-controls="view-pomodoro">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>Pomodoro</span>
+        </button>
+        <button class="nav-tab" data-tab="flashcards" id="tab-flashcards" role="tab" aria-selected="false" aria-controls="view-flashcards">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="14" rx="3"/>
+            <path d="M7 2v3M17 2v3M3 10h18"/>
+          </svg>
+          <span>Flashcards</span>
+        </button>
+        <button class="nav-tab" data-tab="quiz" id="tab-quiz" role="tab" aria-selected="false" aria-controls="view-quiz">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+          <span>Quiz</span>
+        </button>
+        <button class="nav-tab" data-tab="settings" id="tab-settings" role="tab" aria-selected="false" aria-controls="view-settings">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+          <span>Stats &amp; Settings</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Views Container -->
+  <main class="main-content">
+
+    <!-- ========================================== -->
+    <!-- 1. POMODORO VIEW -->
+    <!-- ========================================== -->
+    <section class="tab-view active" id="view-pomodoro" role="tabpanel" aria-labelledby="tab-pomodoro">
+      <div class="view-grid pomodoro-layout">
+        
+        <!-- Timer Card -->
+        <div class="card timer-card">
+          <!-- Mode Selectors -->
+          <div class="timer-mode-switcher">
+            <button class="mode-btn active" data-mode="pomodoro" id="btn-mode-pomodoro">
+              <span class="mode-dot"></span> Focus
+            </button>
+            <button class="mode-btn" data-mode="shortBreak" id="btn-mode-short">
+              <span class="mode-dot"></span> Short Break
+            </button>
+            <button class="mode-btn" data-mode="longBreak" id="btn-mode-long">
+              <span class="mode-dot"></span> Long Break
+            </button>
+          </div>
+
+          <!-- Circular Clock Display -->
+          <div class="clock-display-wrap">
+            <svg class="progress-ring" viewBox="0 0 320 320" width="300" height="300">
+              <circle class="progress-ring-bg" stroke="rgba(255, 255, 255, 0.08)" stroke-width="12" fill="transparent" r="136" cx="160" cy="160"/>
+              <circle class="progress-ring-circle" id="timerProgressRing" stroke="url(#timerGrad)" stroke-width="12" stroke-linecap="round" fill="transparent" r="136" cx="160" cy="160"/>
+              <defs>
+                <linearGradient id="timerGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#8B5CF6"/>
+                  <stop offset="50%" stop-color="#3B82F6"/>
+                  <stop offset="100%" stop-color="#06B6D4"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="clock-inner">
+              <div class="timer-digits" id="timerDisplay">25:00</div>
+              <div class="timer-status-badge" id="timerStatusLabel">Time to focus!</div>
+              <div class="quick-adjust-row">
+                <button class="quick-adjust-btn" id="btnMinusMinute" title="Subtract 1 minute" aria-label="Subtract 1 minute">-1m</button>
+                <button class="quick-adjust-btn" id="btnAddMinute" title="Add 1 minute" aria-label="Add 1 minute">+1m</button>
+                <button class="quick-adjust-btn" id="btnAddFive" title="Add 5 minutes" aria-label="Add 5 minutes">+5m</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="timer-controls">
+            <button class="control-btn secondary" id="btnTimerReset" title="Reset Timer">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 4v6h6M23 20v-6h-6"/>
+                <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+              </svg>
+              <span>Reset</span>
+            </button>
+            <button class="control-btn primary large-play" id="btnTimerToggle" title="Start or Pause Timer">
+              <svg id="playIcon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              <svg id="pauseIcon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="hidden">
+                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                <rect x="14" y="4" width="4" height="16" rx="1"/>
+              </svg>
+              <span id="btnTimerToggleText">Start Session</span>
+            </button>
+            <button class="control-btn secondary" id="btnTimerSkip" title="Skip to next session">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 4 15 12 5 20 5 4"/>
+                <line x1="19" y1="5" x2="19" y2="19"/>
+              </svg>
+              <span>Skip</span>
+            </button>
+          </div>
+
+          <!-- Ambient Sound Generator -->
+          <div class="ambient-audio-bar">
+            <div class="audio-label">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18V5l12-2v13M9 9l12-2"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+              </svg>
+              <span>Focus Sound:</span>
+            </div>
+            <div class="audio-toggles">
+              <button class="sound-chip active" data-sound="none">Off</button>
+              <button class="sound-chip" data-sound="rain">🌧️ Rain</button>
+              <button class="sound-chip" data-sound="brown">🌊 Deep Waves</button>
+              <button class="sound-chip" data-sound="white">📻 White Noise</button>
+            </div>
+            <div class="sound-volume-slider-wrap" id="ambientVolWrap">
+              <input type="range" id="ambientVolume" min="0" max="100" value="40" title="Ambient volume">
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar / Study Goals & Mascot Buddy Widget -->
+        <div class="pomodoro-sidebar">
+          
+          <!-- Study Buddy Interactive Card -->
+          <div class="card buddy-card">
+            <div class="buddy-header">
+              <div class="buddy-avatar" id="mascotAvatar">
+                <div class="buddy-halo"></div>
+                <div class="buddy-face" id="buddyFace">
+                  <div class="buddy-eyes">
+                    <div class="eye left-eye"><div class="pupil"></div></div>
+                    <div class="eye right-eye"><div class="pupil"></div></div>
+                  </div>
+                  <div class="buddy-mouth" id="buddyMouth"></div>
+                  <div class="buddy-blush left"></div>
+                  <div class="buddy-blush right"></div>
+                </div>
+              </div>
+              <div class="buddy-identity">
+                <h3>Pixel Buddy</h3>
+                <span class="status-indicator online"></span>
+                <span class="buddy-role">Your Study Coach</span>
+              </div>
+            </div>
+            <div class="buddy-bubble" id="buddySpeechBubble">
+              "You're capable of amazing things! Let's lock in for a powerful focus block."
+            </div>
+            <div class="buddy-action-row">
+              <button class="btn-bubble-nudge" id="btnNudgeBuddy">✨ Give Me Motivation!</button>
+              <button class="btn-bubble-nudge" id="btnBuddyTip">💡 Study Tip</button>
+            </div>
+          </div>
+
+          <!-- Quick Stats & Current Session Goals -->
+          <div class="card mini-stats-card">
+            <h3>Today's Study Streak</h3>
+            <div class="stat-pills-row">
+              <div class="stat-pill">
+                <div class="stat-val" id="statPomoCount">0</div>
+                <div class="stat-lbl">Pomodoros</div>
+              </div>
+              <div class="stat-pill">
+                <div class="stat-val" id="statStudyMinutes">0m</div>
+                <div class="stat-lbl">Focus Time</div>
+              </div>
+              <div class="stat-pill">
+                <div class="stat-val" id="statStreakDays">1 🔥</div>
+                <div class="stat-lbl">Day Streak</div>
+              </div>
+            </div>
+
+            <!-- Task Focus input for this pomodoro -->
+            <div class="session-task-box">
+              <label for="currentFocusTask">Target for this block:</label>
+              <div class="task-input-wrap">
+                <input type="text" id="currentFocusTask" placeholder="e.g. Master React Hooks or Biology Chapter 4..." maxlength="60">
+                <button id="btnSaveTask" class="btn-icon" title="Save focus goal">✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. FLASHCARDS VIEW -->
+    <!-- ========================================== -->
+    <section class="tab-view" id="view-flashcards" role="tabpanel" aria-labelledby="tab-flashcards">
+      <div class="flashcards-layout">
+        
+        <!-- Deck Controls Bar -->
+        <div class="deck-controls-bar card">
+          <div class="deck-selector-wrap">
+            <label for="deckSelect">Select Deck:</label>
+            <select id="deckSelect" class="styled-select"></select>
+            <span class="deck-counter-badge" id="deckCardCount">0 cards</span>
+          </div>
+
+          <div class="deck-actions-wrap">
+            <button class="btn btn-secondary" id="btnNewDeck">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              New Deck
+            </button>
+            <button class="btn btn-primary" id="btnAddCardModal">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Add Card
+            </button>
+            <button class="btn btn-secondary" id="btnManageDeck">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Manage Deck
+            </button>
+            <button class="btn btn-outline" id="btnQuizFromDeck" title="Generate an instant quiz from this deck!">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              Quiz This Deck
+            </button>
+          </div>
+        </div>
+
+        <!-- Flashcard Stage -->
+        <div class="flashcard-stage">
+          
+          <!-- Card Progress Tracker -->
+          <div class="card-progress-bar-container">
+            <div class="card-progress-info">
+              <span id="cardIndexLabel">Card 1 of 5</span>
+              <span class="card-mastery-rate" id="cardMasteryRate">Mastered: 0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="flashcardProgressBar" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- 3D Interactive Card Container -->
+          <div class="flashcard-scene" id="flashcardScene" tabindex="0" role="button" aria-label="Interactive flashcard. Press space or click to flip.">
+            <div class="flashcard" id="activeFlashcard">
+              <!-- Front Side -->
+              <div class="card-face card-front">
+                <div class="face-tag-row">
+                  <span class="card-badge" id="cardFrontCategory">Prompt</span>
+                  <span class="card-hint-badge">Click or press Space to flip ↺</span>
+                </div>
+                <div class="face-body">
+                  <p class="card-text" id="cardFrontText">Loading prompt...</p>
+                </div>
+                <div class="face-footer">
+                  <span class="keyboard-tip">Tip: Press [Space] to flip &bull; [&larr; / &rarr;] to navigate</span>
+                </div>
+              </div>
+
+              <!-- Back Side -->
+              <div class="card-face card-back">
+                <div class="face-tag-row">
+                  <span class="card-badge success-badge" id="cardBackCategory">Answer</span>
+                  <span class="card-hint-badge">Click to flip back ↺</span>
+                </div>
+                <div class="face-body">
+                  <p class="card-text" id="cardBackText">Loading answer...</p>
+                </div>
+                <div class="face-footer">
+                  <span class="card-learned-status" id="cardStatusBadge">Needs practice</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Flashcard Navigation & Assessment Controls -->
+          <div class="flashcard-nav-controls">
+            <button class="nav-arrow-btn" id="btnPrevCard" title="Previous card (Left Arrow)">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              <span>Prev</span>
+            </button>
+
+            <div class="assessment-buttons">
+              <button class="btn-assess needs-review" id="btnMarkNeedsReview" title="Mark for review (R)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                <span>Needs Practice</span>
+              </button>
+              <button class="btn-assess flip-btn" id="btnFlipCard" title="Flip card (Spacebar)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                <span>Flip Card</span>
+              </button>
+              <button class="btn-assess mastered" id="btnMarkMastered" title="Mark as mastered (M)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Mastered!</span>
+              </button>
+            </div>
+
+            <button class="nav-arrow-btn" id="btnNextCard" title="Next card (Right Arrow)">
+              <span>Next</span>
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+          <div class="card-extra-actions">
+            <button class="btn-link" id="btnShuffleDeck">🔀 Shuffle Deck</button>
+            <button class="btn-link" id="btnResetMastery">↺ Reset Progress</button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. QUIZ VIEW -->
+    <!-- ========================================== -->
+    <section class="tab-view" id="view-quiz" role="tabpanel" aria-labelledby="tab-quiz">
+      <div class="quiz-layout">
+        
+        <!-- Quiz Selection Screen (Default when entering) -->
+        <div class="quiz-panel card" id="quizSelectPanel">
+          <div class="panel-header">
+            <div>
+              <h2>Test Your Knowledge</h2>
+              <p class="subtitle">Choose a saved quiz, take a quiz generated from your flashcards, or create your own custom challenge!</p>
+            </div>
+            <button class="btn btn-primary" id="btnCreateCustomQuiz">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Create Custom Quiz
+            </button>
+          </div>
+
+          <div class="quiz-category-grid" id="quizListContainer">
+            <!-- Quiz cards rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Quiz Gameplay Screen (Hidden until quiz starts) -->
+        <div class="quiz-panel card hidden" id="quizPlayPanel">
+          
+          <div class="quiz-play-header">
+            <div class="quiz-info-meta">
+              <button class="btn-icon-back" id="btnExitQuiz" title="Exit Quiz">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <div>
+                <h3 id="currentQuizTitle">Quiz Title</h3>
+                <span class="quiz-subtitle" id="currentQuizSubtitle">Question 1 of 5</span>
+              </div>
+            </div>
+            <div class="quiz-stats-header">
+              <div class="quiz-score-pill">Score: <strong id="liveQuizScore">0</strong></div>
+              <div class="quiz-streak-pill">🔥 <strong id="liveQuizStreak">0</strong> streak</div>
+            </div>
+          </div>
+
+          <!-- Progress track -->
+          <div class="progress-track" style="margin-top: 1rem; margin-bottom: 1.5rem;">
+            <div class="progress-fill" id="quizProgressBar" style="width: 20%;"></div>
+          </div>
+
+          <!-- Question Box -->
+          <div class="quiz-question-card">
+            <span class="question-pill-tag" id="questionNumberTag">Question 1</span>
+            <h2 class="question-text" id="quizQuestionText">What is the capital of Javascript?</h2>
+          </div>
+
+          <!-- Options Grid -->
+          <div class="quiz-options-grid" id="quizOptionsContainer">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Feedback / Explanation Box (Revealed after pick) -->
+          <div class="quiz-feedback-box hidden" id="quizFeedbackBox">
+            <div class="feedback-status" id="feedbackStatus">Correct! 🎉</div>
+            <p class="feedback-explanation" id="feedbackExplanation">Detailed explanation goes here.</p>
+            <button class="btn btn-primary" id="btnNextQuizQuestion">
+              <span>Next Question</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Quiz Results Screen (Hidden until finished) -->
+        <div class="quiz-panel card hidden" id="quizResultsPanel">
+          <div class="results-container">
+            <div class="result-badge-wrap">
+              <div class="result-score-circle" id="resultScoreRing">
+                <span class="result-pct" id="resultScorePct">100%</span>
+                <span class="result-grade" id="resultGradeText">Outstanding!</span>
+              </div>
+            </div>
+
+            <h2 id="resultTitle">Quiz Finished!</h2>
+            <p class="results-summary-text" id="resultSummaryText">You got 5 out of 5 questions right!</p>
+
+            <div class="result-buddy-feedback" id="resultBuddyFeedback">
+              <span class="buddy-quote">"Incredible performance! You're really mastering this material."</span>
+            </div>
+
+            <div class="results-actions">
+              <button class="btn btn-secondary" id="btnRetakeQuiz">↺ Try Again</button>
+              <button class="btn btn-primary" id="btnBackToQuizList">Choose Another Quiz</button>
+            </div>
+
+            <!-- Answer Breakdown List -->
+            <div class="answers-review-container">
+              <h3>Question Review</h3>
+              <div class="review-list" id="quizReviewList">
+                <!-- Answer items injected by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. STATS & SETTINGS VIEW -->
+    <!-- ========================================== -->
+    <section class="tab-view" id="view-settings" role="tabpanel" aria-labelledby="tab-settings">
+      <div class="view-grid settings-layout">
+        
+        <!-- Timer Settings Card -->
+        <div class="card settings-card">
+          <div class="card-title-row">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+            <h2>Timer Configuration</h2>
+          </div>
+          <p class="card-desc">Customize your study intervals and break durations according to your personal study rhythm.</p>
+
+          <form id="timerSettingsForm" class="settings-form">
+            <div class="form-group">
+              <label for="settingPomoDuration">
+                <span>Pomodoro Duration (minutes)</span>
+                <span class="field-hint">Standard: 25 min</span>
+              </label>
+              <input type="number" id="settingPomoDuration" min="1" max="120" value="25" class="styled-input">
+            </div>
+
+            <div class="form-group">
+              <label for="settingShortBreak">
+                <span>Short Break Duration (minutes)</span>
+                <span class="field-hint">Standard: 5 min</span>
+              </label>
+              <input type="number" id="settingShortBreak" min="1" max="60" value="5" class="styled-input">
+            </div>
+
+            <div class="form-group">
+              <label for="settingLongBreak">
+                <span>Long Break Duration (minutes)</span>
+                <span class="field-hint">Standard: 15 min</span>
+              </label>
+              <input type="number" id="settingLongBreak" min="1" max="90" value="15" class="styled-input">
+            </div>
+
+            <div class="form-group toggle-group">
+              <div>
+                <label for="settingSoundToggle">Audio Chimes</label>
+                <div class="field-hint">Play chime when timer starts or completes</div>
+              </div>
+              <input type="checkbox" id="settingSoundToggle" checked class="styled-toggle">
+            </div>
+
+            <div class="form-group toggle-group">
+              <div>
+                <label for="settingAutoStartBreaks">Auto-start Breaks</label>
+                <div class="field-hint">Automatically begin break timer when focus session finishes</div>
+              </div>
+              <input type="checkbox" id="settingAutoStartBreaks" class="styled-toggle">
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btnSaveTimerSettings">Save Timer Settings</button>
+          </form>
+        </div>
+
+        <!-- Study Stats & Data Card -->
+        <div class="card settings-card">
+          <div class="card-title-row">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            <h2>Study Statistics &amp; Backup</h2>
+          </div>
+          <p class="card-desc">Your progress is automatically saved locally in your browser storage.</p>
+
+          <div class="stats-overview-grid">
+            <div class="stat-box">
+              <div class="stat-number" id="statsTotalPomos">0</div>
+              <div class="stat-label">Total Focus Sessions</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number" id="statsTotalMinutes">0h 0m</div>
+              <div class="stat-label">Total Time Focused</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number" id="statsCardsMastered">0</div>
+              <div class="stat-label">Cards Mastered</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number" id="statsQuizzesCompleted">0</div>
+              <div class="stat-label">Quizzes Completed</div>
+            </div>
+          </div>
+
+          <div class="backup-actions">
+            <h3>Data Management</h3>
+            <div class="backup-btn-row">
+              <button class="btn btn-secondary" id="btnExportData">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Export Backup (JSON)
+              </button>
+              <label class="btn btn-secondary file-upload-label" for="importDataInput">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                Import Backup
+                <input type="file" id="importDataInput" accept=".json" class="hidden-file-input">
+              </label>
+              <button class="btn btn-danger-outline" id="btnResetAllData">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                Reset All Data
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALS -->
+  <!-- ========================================== -->
+
+  <!-- 1. Add Flashcard Modal -->
+  <div class="modal-backdrop hidden" id="modalAddCard">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add New Flashcard</h3>
+        <button class="modal-close" data-close-modal="modalAddCard" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="formAddCard" class="modal-form">
+        <div class="form-group">
+          <label for="cardDeckAssign">Target Deck</label>
+          <select id="cardDeckAssign" class="styled-select" required></select>
+        </div>
+        <div class="form-group">
+          <label for="cardFrontInput">Front Side (Question / Concept)</label>
+          <textarea id="cardFrontInput" rows="3" class="styled-textarea" placeholder="e.g. What is closure in JavaScript?" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="cardBackInput">Back Side (Answer / Explanation)</label>
+          <textarea id="cardBackInput" rows="4" class="styled-textarea" placeholder="e.g. A closure is the combination of a function bundled together with references to its surrounding lexical state." required></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close-modal="modalAddCard">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Flashcard</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Create Deck Modal -->
+  <div class="modal-backdrop hidden" id="modalNewDeck">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Create New Deck</h3>
+        <button class="modal-close" data-close-modal="modalNewDeck" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="formNewDeck" class="modal-form">
+        <div class="form-group">
+          <label for="newDeckTitle">Deck Name</label>
+          <input type="text" id="newDeckTitle" class="styled-input" placeholder="e.g. World History, Spanish Vocab, Biology 101" required>
+        </div>
+        <div class="form-group">
+          <label for="newDeckDescription">Description (Optional)</label>
+          <input type="text" id="newDeckDescription" class="styled-input" placeholder="e.g. Key terms for midterm prep">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close-modal="modalNewDeck">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Deck</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Manage Deck / Cards List Modal -->
+  <div class="modal-backdrop hidden" id="modalManageDeck">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <div>
+          <h3 id="manageDeckTitle">Manage Deck Cards</h3>
+          <span class="field-hint" id="manageDeckSubtitle">Edit or remove cards from this deck</span>
+        </div>
+        <button class="modal-close" data-close-modal="modalManageDeck" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="manage-cards-list-wrap">
+        <div class="manage-deck-topbar">
+          <button class="btn btn-danger-outline btn-sm" id="btnDeleteCurrentDeck">Delete Entire Deck</button>
+        </div>
+        <div class="cards-table-container" id="manageCardsList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" data-close-modal="modalManageDeck">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Create Custom Quiz Modal -->
+  <div class="modal-backdrop hidden" id="modalCustomQuiz">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <div>
+          <h3>Build Custom Quiz</h3>
+          <span class="field-hint">Add your own questions, multiple-choice options, and explanations</span>
+        </div>
+        <button class="modal-close" data-close-modal="modalCustomQuiz" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="formCustomQuiz" class="modal-form">
+        <div class="form-group">
+          <label for="customQuizTitle">Quiz Title</label>
+          <input type="text" id="customQuizTitle" class="styled-input" placeholder="e.g. JavaScript Async Mastery" required>
+        </div>
+        <div class="form-group">
+          <label for="customQuizDescription">Quiz Description</label>
+          <input type="text" id="customQuizDescription" class="styled-input" placeholder="e.g. 5 questions on Promises and Async/Await">
+        </div>
+
+        <div class="quiz-builder-questions-section">
+          <div class="builder-questions-header">
+            <h4>Questions (<span id="builderQuestionCount">1</span>)</h4>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnAddQuizQuestionRow">+ Add Question</button>
+          </div>
+          <div class="builder-questions-list" id="builderQuestionsList">
+            <!-- Dynamic question items -->
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close-modal="modalCustomQuiz">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Custom Quiz</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
